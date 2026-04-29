@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Easy Dine"
+version = "1.0.0"
+id = "artifacts/easy-dine"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24223
+
+[services.development]
+run = "pnpm --filter @workspace/easy-dine run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/easy-dine", "run", "build" ]
+publicDir = "artifacts/easy-dine/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24223"
+BASE_PATH = "/"

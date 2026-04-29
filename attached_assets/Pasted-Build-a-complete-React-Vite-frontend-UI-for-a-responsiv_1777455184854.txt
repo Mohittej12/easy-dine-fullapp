@@ -1,0 +1,536 @@
+Build a complete React + Vite frontend UI for a responsive web app called Easy Dine.
+
+Easy Dine is a premium internal food ordering platform for Prodapt employees. It has 3 roles:
+1. Employee/User
+2. Vendor/Restaurant Staff
+3. Admin
+
+Use mock data only. No backend now. Use React Router. Build all pages fully with realistic mock data. No blank placeholder pages.
+
+FINAL RESTAURANTS/SHOPS:
+Use only these two names everywhere:
+1. Meal Counter
+2. Tuck Shop
+
+IMPORTANT LOGIN FLOW:
+Do NOT create a separate role selection page.
+Create one unified login page at /login.
+Inside the login page, add a role segmented control/tabs:
+Employee | Vendor | Admin
+
+After Sign In:
+Employee -> /employee/mode-selection
+Vendor -> /vendor/dashboard
+Admin -> /admin/dashboard
+
+Employee login uses Email + Password.
+Vendor login uses Phone/Email + Password.
+Admin login uses Email + Password.
+
+GLOBAL UI STYLE:
+Match the uploaded screenshots closely.
+Premium red theme: #ff1c12.
+Background: warm white / cream / very light gray.
+Cards: white, 20px-28px rounded corners, soft shadows.
+Buttons: red filled primary, white outlined secondary.
+Typography: bold black titles, gray subtitles, clean hierarchy.
+Inputs: rounded, light border, soft red focus.
+Use ₹ for all prices.
+Mobile-first polished app style.
+Employee screens should feel like a native food ordering mobile app.
+Vendor/Admin screens should feel like compact premium enterprise dashboards.
+No old admin template UI.
+No huge blank stat cards.
+No clutter.
+No unnecessary pages.
+No kitchen statuses like Preparing or Ready.
+Order statuses ONLY: Delivered and Rejected.
+
+RESPONSIVE:
+Mobile Employee: floating rounded bottom nav.
+Mobile Vendor/Admin: top header + hamburger drawer.
+Desktop Vendor/Admin: left sidebar.
+Desktop Employee: centered premium layout, still responsive.
+Use cards on mobile and compact grids/tables on desktop.
+
+ROUTES:
+Login:
+- /login
+
+Employee:
+- /employee/register
+- /employee/verify-email
+- /employee/forgot-password
+- /employee/mode-selection
+- /employee/home
+- /employee/menu
+- /employee/meal-pass
+- /employee/meal-authorization
+- /employee/orders
+- /employee/profile
+- /employee/usage
+- /employee/terms
+- /employee/cart
+- /employee/checkout
+
+Vendor:
+- /vendor/dashboard
+- /vendor/orders
+- /vendor/food-items
+- /vendor/add-food
+- /vendor/edit-food/:id
+- /vendor/reports
+- /vendor/ticket-data
+- /vendor/terms
+
+Admin:
+- /admin/dashboard
+- /admin/vendor-performance
+- /admin/vendors
+- /admin/menu-management
+- /admin/food-items
+- /admin/upload-ticket-data
+- /admin/add-food
+- /admin/edit-food/:id
+- /admin/terms
+
+==================================================
+UNIFIED LOGIN PAGE
+==================================================
+Route: /login
+
+Top food hero image with rounded lower corners.
+Show Prodapt logo/text and Easy Dine branding.
+Role tabs: Employee, Vendor, Admin.
+Selected role tab must be red.
+Fields:
+- Email address for Employee/Admin
+- Phone Number or Email for Vendor
+- Password
+Button:
+- Sign In
+Below:
+- Remember me
+- Forgot Password?
+- New here? Create account
+- Terms/Disclaimer text
+
+When role changes, update small subtitle:
+Employee: Order meals inside Prodapt campus.
+Vendor: Manage cafeteria orders and menu.
+Admin: Monitor Easy Dine operations.
+
+==================================================
+EMPLOYEE ROLE
+==================================================
+
+Employee Register:
+Title Easy Dine.
+Fields: Employee ID, Employee Name, Email Address, Program, Cost Code, Password.
+Terms checkbox.
+Red Create Account button.
+Footer: Already have an account? Sign In.
+
+Verify Email:
+Title Easy Dine.
+Heading Verify Your Email.
+OTP boxes.
+Resend Code text.
+Red Verify Email button.
+
+Forgot Password:
+Soft red/pink gradient background.
+Centered white card.
+Heading Forgot Password?
+Email field.
+Red Send Reset OTP button.
+Back to Sign In.
+
+Mode Selection:
+Heading Choose Ordering Mode.
+Subtitle Select how you want to order today.
+Two premium cards:
+1. Ticketing
+Subtitle: Breakfast & Dinner Access
+2. Pay and Use
+Subtitle: Browse restaurants and pay online
+No separate role selection here.
+Click Ticketing -> /employee/meal-pass.
+Click Pay and Use -> /employee/home.
+
+Employee Home:
+Top Easy Dine title.
+Greeting: Hi, Sarah.
+Text: What are you craving today?
+Search bar with filter icon.
+Featured Cafeteria’s section with image cards:
+- Meal Counter
+- Tuck Shop
+Popular Dishes section with View more.
+Food cards with image, dish name, shop name, rating, calories/time, red ₹ price.
+Floating bottom nav: Menu, Orders, Profile.
+
+Employee Menu:
+Top Easy Dine header.
+Menu label.
+Cart icon with red count badge.
+Segmented shop selector:
+- Meal Counter
+- Tuck Shop
+Category pills:
+Breakfast, Lunch, Dinner, Snacks, Juice/Beverages.
+Food grid cards:
+image, favorite heart, red plus Add button, item name, ₹ price, veg/non-veg badge, popular badge.
+Bottom nav with Menu active.
+Cart rule: only one shop at a time. If cart has Meal Counter item and user adds Tuck Shop item, show modal:
+Title: Clear cart?
+Message: Your cart has items from another shop. Clear cart to add this item?
+Buttons: Cancel, Clear Cart.
+
+Employee Meal Pass / Ticketing:
+This is mainly for Meal Counter access.
+Title: Today’s Available Meals.
+Mode chips: Meal Pass, Breakfast, Dinner.
+Show only simplified meal cards, no normal browsing.
+Cards:
+1. Breakfast Meal
+Timing: 8:00 AM - 10:30 AM
+Badge: Free Meal / Company Sponsored
+Button: Select
+2. Dinner Meal
+Timing: 7:00 PM - 9:30 PM
+Badge: Free Meal / Company Sponsored
+Button: Select
+Click Select -> /employee/meal-authorization.
+
+Meal Authorization:
+VERY IMPORTANT:
+Do NOT ask for Ticket ID.
+Do NOT show Ticket ID input anywhere.
+The employee should directly make the meal request.
+For off-ticket/internal validation, automatically fetch logged-in employee data.
+
+Show selected meal preview card.
+Show Meal Access Type toggle:
+- Internal ID
+- Employee ID
+Auto-filled employee fields:
+- Full Name
+- Employee ID
+- Program
+- Cost Code
+- Department
+Fields should look read-only or prefilled.
+Checkbox:
+I confirm that this meal request follows company policy.
+Buttons:
+- Submit Request
+- Cancel
+On submit show confirmation:
+Title: Meal Confirmed
+Message: Collect directly from restaurant
+Button: View Orders
+Create mock order:
+orderType = mealPass
+paymentType = free
+amount = ₹0
+shop = Meal Counter
+status = Delivered or Rejected only.
+
+Employee Orders:
+Top My Orders.
+Tabs: All Orders, Active, History.
+Order cards:
+Order ID, shop name, item thumbnails, item names, amount, date/time, status badge.
+Meal pass orders show Free Meal / Company Sponsored badge and ₹0.
+Bottom nav Orders active.
+
+Profile:
+Easy Dine header.
+Profile card with avatar, name, employee ID.
+Account items:
+My Usage, Favorites, Change Password.
+Settings:
+Terms & Disclaimer, Help & Support.
+Logout button.
+Bottom nav Profile active.
+
+My Usage:
+Tabs Today, This Week, This Month.
+Summary cards:
+Total Orders, Total Spent.
+Today’s Breakdown cards with Delivered and Company Sponsored badges.
+Red Download Report button.
+
+Terms:
+Back arrow.
+Heading Terms & Disclaimer.
+Cards:
+For Users, For Admin, For Vendors, Disclaimer, Need Help.
+Contact Support button.
+
+Cart:
+Top My Cart.
+Item cards:
+image, name, red price, quantity stepper minus/plus, delete icon.
+Bill Summary:
+Subtotal, Total in red.
+Red Proceed to Pay button.
+
+Checkout:
+Top Checkout.
+Order Summary card with items, qty, subtotal, total.
+Payment Method card:
+UPI, PhonePe/GPay/Paytm, red selected border.
+Red Pay Now · ₹amount button.
+Footer: 100% Secure Payment.
+After payment create mock regular order and redirect to Orders.
+
+==================================================
+VENDOR ROLE
+==================================================
+
+Vendor manages only assigned shop. Use mock assignedShop.
+
+Vendor layout:
+Mobile: hamburger header + drawer.
+Desktop: left sidebar.
+Drawer header: Easy Dine Vendor Panel, avatar/name/role.
+Drawer items:
+Dashboard, Orders, Food Items, Reports, Terms and Disclaimer, Ticket Data View, Sign Out.
+Active item red.
+
+Vendor Dashboard:
+Top hamburger + Dashboard.
+Compact red summary card:
+Today’s Orders, Revenue ₹.
+Active Orders section.
+Order mini cards:
+Order ID, items, time, amount, status badge.
+Buttons: Delivered, Reject.
+
+Vendor Orders:
+Tabs: Active, Delivered.
+Order cards:
+Order ID, time, user, items, total, order type Regular/Ticketing.
+Meal pass orders show Free Meal / Company Sponsored badge.
+Buttons:
+Mark Delivered, Reject Order.
+Only Delivered/Rejected statuses.
+
+Vendor Food Items:
+Header Food Items, plus add button.
+Search bar with filter icon.
+Food item rows/cards:
+image, name, description, ₹ price, Available badge, toggle, edit icon, delete icon.
+Items examples:
+Chicken Biryani, Veg Sandwich, Margherita Pizza, Cold Coffee, Masala Dosa, Idli.
+
+Vendor Add Food:
+Upload Food Image box.
+Fields:
+Food Name, Price, Primary Category, Secondary Category, Diet Veg/Non-Veg, Description.
+Red Save Food button.
+
+Vendor Edit Food:
+Food image preview.
+Change Image button.
+Editable fields.
+Red Save Changes button.
+Delete Food red text link.
+
+Vendor Reports:
+Tabs: Today, This Week, This Month.
+KPI cards:
+Revenue, Orders, Avg Order.
+Weekly Revenue bar chart using red bars.
+Order Breakdown cards.
+Top Selling Items list.
+Company Sponsored Meals card.
+
+Vendor Ticket Data View:
+Title Daily Uploaded Ticket Data.
+Subtitle View and export ticket data uploaded each day.
+Date selector.
+Uploaded Reports list.
+Each row:
+file icon, date, uploaded time, purple Export File button.
+Daily Report History cards.
+
+Vendor Terms:
+Same styled terms cards:
+For Users, For Admin, For Vendors, Disclaimer, Need Help, Contact Support.
+
+==================================================
+ADMIN ROLE
+==================================================
+
+Admin layout:
+Mobile: hamburger header + drawer.
+Desktop: left sidebar.
+Drawer header: Easy Dine Admin Panel, avatar/name/role.
+Drawer items:
+Dashboard, Menu Management, Terms and Disclaimer, Vendors, Vendor Performance, Food Items, Upload Ticket Data, Sign Out.
+Active item red.
+
+Admin Dashboard:
+Top Dashboard.
+Subtitle Monitor cafeteria operations.
+Compact KPI grid:
+Total Orders, Delivered, Rejected, Revenue ₹.
+Weekly Orders red bar chart.
+Cafeteria Snapshot cards:
+- Meal Counter
+- Tuck Shop
+Each card:
+orders, revenue, delivered %, rejected %, meal pass/ticketing count.
+Keep compact, no giant cards.
+
+Vendor Performance:
+Search bar:
+Search by order ID, user name, or cafeteria.
+Today dropdown.
+Red Export button.
+Filter pills:
+All, Delivered, Rejected, Meal Pass.
+Cards/rows:
+Order ID, user, shop name, amount, type, status badge, time.
+
+Vendors:
+Heading Vendors.
+Subtitle Manage vendor accounts and performance.
+Search vendors.
+Sort by Orders dropdown.
+Vendor cards for:
+- Meal Counter
+- Tuck Shop
+Each card:
+shop icon, name, Active badge, total orders, total sales/revenue, meal pass count, rejected count, Reset Credentials button, overflow menu.
+Floating red/orange add button.
+
+Menu Management:
+Heading Menu Management.
+Subheading Select Cafeteria.
+Restaurant cards:
+Meal Counter, Tuck Shop.
+Each card:
+icon/initial, active badge, total items, active items.
+Click shop -> Food Items filtered.
+
+Admin Food Items:
+Header Food Items, add button.
+Search bar.
+Food rows:
+image, name, description, ₹ price, availability toggle ON/OFF, Available badge, edit/delete icons.
+ON = visible to users.
+OFF = hidden immediately.
+Delete opens modal:
+Title Delete item?
+Message This food item will be removed from the menu.
+Buttons Cancel, Delete.
+
+Upload Ticket Data:
+Title Upload Ticket Data.
+Subtitle Import your ticket data from Excel files.
+Large upload box:
+Upload Excel File
+Drag & drop or browse
+Accepted: .xlsx, .csv
+Requirement cards:
+Required columns, Date validation, Employee ID mapping.
+Recent Uploads list:
+file icon, file name, status, record count, uploaded time, overflow menu.
+Stats cards:
+Total uploads, Total records.
+Purple Start Upload Process button.
+Important:
+Uploaded ticket/off-ticket data supports Meal Counter validation/reporting.
+Employee does not manually enter Ticket ID in meal request.
+
+Admin Add Food:
+Form:
+Shop selector Meal Counter/Tuck Shop.
+Upload Food Image.
+Food Name.
+Price.
+Primary Category.
+Secondary Category.
+Diet Veg/Non-Veg.
+Description.
+Red Save Food button.
+
+Admin Edit Food:
+Same form.
+Change Image.
+Save Changes.
+Delete Food.
+
+Admin Terms:
+Terms & Disclaimer page with cards:
+For Users, For Admin, For Vendors, Disclaimer, Need Help.
+Contact Support button.
+
+==================================================
+MOCK DATA
+==================================================
+
+Create mock data arrays:
+shops:
+id, name, status, totalItems, activeItems, revenue, orders.
+
+foodItems:
+id, shopId, name, description, price, category, secondaryCategory, diet, image, available, popular.
+
+orders:
+orderId, userName, employeeId, shopId, shopName, items, amount, orderType, paymentType, status, date, time.
+
+employees:
+employeeId, name, email, program, costCode, department.
+
+ticketData:
+id, employeeId, employeeName, program, costCode, mealType, date, validationStatus.
+
+Order model:
+orderType: regular or mealPass.
+paymentType: paid or free.
+status: delivered or rejected only.
+Order ID format example:
+ORD-ED-20458.
+
+Meal pass:
+No Ticket ID input.
+Use logged-in employee data automatically.
+Amount ₹0.
+Shop Meal Counter.
+Badge Free Meal / Company Sponsored.
+
+==================================================
+INTERACTIONS
+==================================================
+
+Implement using local React state:
+- role tabs on login
+- redirect after login based on selected role
+- drawer open/close
+- add item to cart
+- cart count badge
+- quantity plus/minus
+- delete cart item
+- clear cart modal when switching shop
+- proceed to checkout
+- Pay Now creates mock order
+- meal request creates free meal order without Ticket ID
+- order filters/search
+- vendor Mark Delivered / Reject Order
+- toggle food availability
+- delete food confirmation
+- upload ticket data mock success
+- responsive nav states
+
+VISUAL QUALITY:
+Use real food images from public URLs/Unsplash.
+Use modern icons.
+Use smooth hover/tap states.
+Use compact spacing.
+Make every page polished and complete.
+Match the screenshots as closely as possible.
