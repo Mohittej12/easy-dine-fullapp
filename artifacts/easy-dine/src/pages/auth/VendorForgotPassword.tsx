@@ -3,12 +3,12 @@ import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Mail } from "lucide-react";
+import { Eye, EyeOff, Phone } from "lucide-react";
 
-export default function ForgotPassword() {
+export default function VendorForgotPassword() {
   const [, setLocation] = useLocation();
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -85,8 +85,8 @@ export default function ForgotPassword() {
 
             <div className="text-center mb-6 px-2">
               <p className="text-[13px] text-gray-600 leading-snug">
-                {step === 1 && "Enter your email to receive reset instructions"}
-                {step === 2 && "Enter the 6-digit OTP sent to your email"}
+                {step === 1 && "Enter your phone number to reset your password"}
+                {step === 2 && "Enter the 6-digit OTP sent to your phone"}
                 {step === 3 && "Create a new password for your account"}
               </p>
             </div>
@@ -104,18 +104,17 @@ export default function ForgotPassword() {
                     className="space-y-4 w-full max-w-[320px] mx-auto absolute inset-0"
                   >
                     <div className="space-y-1">
-                      <label className="text-[12px] font-semibold text-gray-700 ml-1">Email Address</label>
                       <div className="relative">
                         <Input 
-                          id="email" 
-                          type="email" 
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="your.email@example.com"
+                          id="phone" 
+                          type="tel" 
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+91 8888888888"
                           required 
                           className="h-12 rounded-sm bg-white/80 border-gray-200 text-sm focus-visible:ring-[#FF3B30] focus-visible:border-[#FF3B30] placeholder:text-gray-400 pl-10"
                         />
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                       </div>
                     </div>
 

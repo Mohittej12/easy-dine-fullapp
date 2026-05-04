@@ -24,6 +24,8 @@ type AppState = {
   updateFoodItem: (item: FoodItem) => void;
   deleteFoodItem: (itemId: string) => void;
   addFoodItem: (item: FoodItem) => void;
+  favorites: string[]; // Array of food item IDs
+  toggleFavorite: (itemId: string) => void;
 };
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -50,6 +52,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    const saved = localStorage.getItem("easy-dine-favorites");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const setRole = (r: Role | null) => {
     setRoleState(r);
     if (r) {
@@ -66,6 +73,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem("easy-dine-orders", JSON.stringify(orders));
   }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem("easy-dine-favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   useEffect(() => {
     localStorage.setItem("easy-dine-foods", JSON.stringify(foodItems));
@@ -129,6 +140,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFoodItems((prev) => [item, ...prev]);
   };
 
+  const toggleFavorite = (itemId: string) => {
+    setFavorites((prev) => {
+      if (prev.includes(itemId)) {
+        return prev.filter((id) => id !== itemId);
+      }
+      return [...prev, itemId];
+    });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -149,6 +169,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         updateFoodItem,
         deleteFoodItem,
         addFoodItem,
+        favorites,
+        toggleFavorite,
       }}
     >
       {children}

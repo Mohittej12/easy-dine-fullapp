@@ -1,170 +1,259 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useAppState } from "@/hooks/use-app-state";
-import { Coffee, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { X, HelpCircle, FileText, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export default function MealAuthorization() {
   const [, setLocation] = useLocation();
-  const { employee, addOrder } = useAppState();
+  const { employee, cart, addOrder, clearCart } = useAppState();
   
-  const [confirmed, setConfirmed] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [accessType, setAccessType] = useState<"internal" | "employee">("employee");
+  const [accessType, setAccessType] = useState<"ticket" | "off_ticket">("ticket");
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = () => {
-    if (!confirmed) return;
-    
-    // Create mock free meal order
+    if (cart.length === 0) return;
+
     const orderId = `ORD-ED-${Math.floor(10000 + Math.random() * 90000)}`;
     const now = new Date();
     
+    // Map actual cart items to order items
+    const orderItems = cart.map((c, i) => ({
+      id: `m_${i}`,
+      foodItemId: c.foodItem.id,
+      name: c.foodItem.name,
+      price: c.foodItem.price,
+      quantity: c.quantity,
+      image: ""
+    }));
+
     addOrder({
       orderId,
       userName: employee.name,
       employeeId: employee.employeeId,
-      shopId: "shop_meal_counter",
-      shopName: "Meal Counter",
-      items: [{
-        id: "m_1",
-        foodItemId: "f_m",
-        name: "Standard Breakfast Meal",
-        price: 0,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&q=80&w=400"
-      }],
+      shopId: cart[0].foodItem.shopId,
+      shopName: "Meal Counter", // Hardcoded for demo ticketing flow
+      items: orderItems,
       amount: 0,
-      orderType: "mealPass",
+      orderType: "Ticketing",
+      ticketType: accessType === "ticket" ? "ticketId" : "offTicket",
       paymentType: "free",
-      status: "delivered", // Per brief: only delivered or rejected
+      status: "pending", 
       date: now.toISOString().split('T')[0],
       time: now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
     });
     
-    setShowSuccessModal(true);
-  };
-
-  const handleDone = () => {
-    setShowSuccessModal(false);
-    setLocation("/employee/orders");
+    setShowSuccess(true);
+    setTimeout(() => {
+      clearCart();
+      setLocation("/employee/orders");
+    }, 3000);
   };
 
   return (
-    <div className="space-y-6 pb-8">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-foreground">Meal Authorization</h1>
-        <p className="text-muted-foreground font-medium">Confirm your details to claim your meal</p>
+    <div className="flex flex-col min-h-[100dvh] relative overflow-hidden bg-black items-center justify-center p-4">
+      
+      {/* Full-screen Background Image with heavy dark gray overlay */}
+      <div className="fixed inset-0 z-0">
+        <img 
+          src="/background-cafeteria.png" 
+          alt="Modern Cafeteria Background" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[#35383C]/80 backdrop-blur-sm" />
       </div>
 
-      <div className="bg-primary/5 border border-primary/20 rounded-[24px] p-5 flex items-center gap-4">
-        <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm">
-          <Coffee className="w-7 h-7" />
-        </div>
-        <div>
-          <h3 className="font-bold text-lg">Breakfast Meal</h3>
-          <p className="text-sm text-muted-foreground">Meal Counter • Free</p>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-[24px] p-6 shadow-sm border border-border space-y-6">
-        <div className="space-y-3">
-          <Label className="text-base">Meal Access Type</Label>
-          <div className="flex bg-muted p-1 rounded-xl">
-            <button
-              onClick={() => setAccessType('internal')}
-              className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${
-                accessType === 'internal' 
-                  ? 'bg-white text-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
+      {/* Modal Card Container */}
+      <motion.div 
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="z-10 bg-[#F8F9FA] rounded-[32px] w-full max-w-md shadow-2xl overflow-hidden border border-white/20"
+      >
+        <div className="bg-white px-5 py-5 pb-6 border-b border-gray-100 rounded-b-[24px] shadow-[0_4px_20px_-15px_rgba(0,0,0,0.1)] relative z-10">
+          
+          {/* Header */}
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#E31837] rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-sm border-2 border-red-200">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="text-[20px] font-extrabold text-slate-800 leading-tight">Meal Authorization</h1>
+                <p className="text-[12px] text-gray-500 font-medium">Company-sponsored Meal request</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setLocation("/employee/meal-pass")}
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#4285F4] text-[#4285F4] bg-blue-50/50 hover:bg-blue-50 transition-colors"
             >
-              Internal ID
-            </button>
-            <button
-              onClick={() => setAccessType('employee')}
-              className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${
-                accessType === 'employee' 
-                  ? 'bg-white text-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Employee ID
+              <X className="w-5 h-5" />
             </button>
           </div>
-        </div>
 
-        <div className="space-y-4 pt-2">
-          <div className="space-y-2">
-            <Label>Full Name</Label>
-            <Input value={employee.name} readOnly className="bg-muted/50 h-12 rounded-xl text-muted-foreground" />
-          </div>
-          
-          <div className="space-y-2">
-            <Label>Employee ID</Label>
-            <Input value={employee.employeeId} readOnly className="bg-muted/50 h-12 rounded-xl text-muted-foreground" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Program</Label>
-              <Input value={employee.program} readOnly className="bg-muted/50 h-12 rounded-xl text-muted-foreground" />
+          {/* Item Card Box */}
+          <div className="border border-gray-200 rounded-2xl p-4 flex items-center justify-between bg-white shadow-sm relative mb-2">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center text-[#E31837] border border-gray-100 overflow-hidden shrink-0 shadow-sm">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m16 20-3-3m0 0-3-3m3 3V11m-7 8c0 1.1-.9 2-2 2H2v-2h2c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H2V5h2c1.1 0 2 .9 2 2v6c0 1.1.9 2 2 2h4v-4H8v-2h4v-2H8V5h8v4h-2v2h2v4h-2v2h2v4h-2Z"/><path d="m20 11 2 2-2 2"/></svg>
+              </div>
+              <div>
+                <h3 className="font-extrabold text-[16px] text-[#4285F4]">
+                  {cart.length > 0 ? cart[0].foodItem.name : "Meal Item"}
+                </h3>
+                <p className="text-[14px] font-bold text-slate-800 mt-0.5">Meal Counter</p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>Cost Code</Label>
-              <Input value={employee.costCode} readOnly className="bg-muted/50 h-12 rounded-xl text-muted-foreground" />
+            
+            <div className="absolute top-3 right-3 bg-red-50 text-[#E31837] border border-red-100 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide">
+              Company Sponsored
             </div>
           </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="px-5 pt-6 pb-6">
           
-          <div className="space-y-2">
-            <Label>Department</Label>
-            <Input value={employee.department} readOnly className="bg-muted/50 h-12 rounded-xl text-muted-foreground" />
+          <div className="mb-2">
+            <h4 className="text-[14px] font-extrabold text-slate-800 flex gap-1">
+              Meal Access Type <span className="text-[#E31837]">*</span>
+            </h4>
+            <p className="text-[13px] text-gray-500 font-medium">Choose how the dinner meal will be served</p>
           </div>
+
+          {/* Access Type Toggle */}
+          <div className="bg-[#E9ECEF] rounded-xl p-1 mb-5 flex shadow-inner">
+            <button
+              onClick={() => setAccessType('ticket')}
+              className={`flex-1 py-3 text-[14px] font-bold rounded-lg transition-all ${
+                accessType === 'ticket' 
+                  ? 'bg-white text-slate-800 shadow-sm' 
+                  : 'text-gray-500 hover:text-slate-700'
+              }`}
+            >
+              Ticket ID
+            </button>
+            <button
+              onClick={() => setAccessType('off_ticket')}
+              className={`flex-1 py-3 text-[14px] font-bold rounded-lg transition-all ${
+                accessType === 'off_ticket' 
+                  ? 'bg-white text-slate-800 shadow-sm' 
+                  : 'text-gray-500 hover:text-slate-700'
+              }`}
+            >
+              Off - Ticket
+            </button>
+          </div>
+
+          {/* Dynamic Content: Warning Message or Form Fields */}
+          <div className="mb-6">
+            <AnimatePresence mode="wait">
+              {accessType === 'ticket' ? (
+                <motion.div
+                  key="ticket"
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className="flex gap-2 px-2"
+                >
+                  <span className="text-slate-800 font-black text-lg leading-none mt-0.5">•</span>
+                  <p className="text-[13px] font-bold text-slate-800 leading-tight">
+                    Ticket Id raised before 5pm will be verified by the vendor and then the food will be delivered.
+                  </p>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="off_ticket"
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className="space-y-4"
+                >
+                  {/* Employee Details Group */}
+                  <div className="space-y-2">
+                    <h4 className="text-[14px] font-extrabold text-slate-800 flex gap-1">
+                      Employee Details <span className="text-[#E31837]">*</span>
+                    </h4>
+                    <div className="space-y-2">
+                      <input 
+                        type="text" 
+                        value={employee.name} 
+                        readOnly 
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[14px] font-bold text-gray-500 shadow-sm focus:outline-none" 
+                      />
+                      <input 
+                        type="text" 
+                        value={employee.employeeId} 
+                        readOnly 
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[14px] font-bold text-gray-500 shadow-sm focus:outline-none" 
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Program Details Group */}
+                  <div className="space-y-2">
+                    <h4 className="text-[14px] font-extrabold text-slate-800 flex gap-1">
+                      Program Details <span className="text-[#E31837]">*</span>
+                    </h4>
+                    <div className="space-y-2">
+                      <input 
+                        type="text" 
+                        value={employee.program} 
+                        readOnly 
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[14px] font-bold text-gray-500 shadow-sm focus:outline-none" 
+                      />
+                      <input 
+                        type="text" 
+                        value={employee.costCode} 
+                        readOnly 
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[14px] font-bold text-gray-500 shadow-sm focus:outline-none" 
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Info Box */}
+          <div className="border border-gray-200 bg-white rounded-2xl p-4 flex gap-3 mb-8 shadow-sm items-center">
+            <div className="text-[#E31837] bg-red-50 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 border border-red-100">
+              <HelpCircle className="w-4 h-4" />
+            </div>
+            <p className="text-[13px] font-medium text-slate-800 leading-tight">
+              No payment required. This meal is sponsored by your organization.
+            </p>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col gap-3">
+            <button 
+              onClick={handleSubmit}
+              className="w-full py-4 rounded-xl font-bold text-[16px] bg-[#FF4B4B] text-white hover:bg-[#E31837] transition-all shadow-[0_8px_16px_-4px_rgba(255,59,48,0.4)]"
+            >
+              Submit Request
+            </button>
+            <button 
+              onClick={() => setLocation("/employee/meal-pass")}
+              className="w-full py-4 rounded-xl font-bold text-[15px] text-slate-800 hover:bg-gray-100 transition-all border border-transparent hover:border-gray-200"
+            >
+              Cancel
+            </button>
+          </div>
+          
         </div>
+      </motion.div>
 
-        <div className="pt-4 flex items-start space-x-3">
-          <Checkbox 
-            id="terms" 
-            checked={confirmed} 
-            onCheckedChange={(c) => setConfirmed(c as boolean)}
-            className="mt-1"
-          />
-          <label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
-            I confirm that this meal request follows company policy and I am authorized for this shift meal.
-          </label>
-        </div>
-      </div>
-
-      <div className="flex gap-4">
-        <Button variant="outline" className="flex-1 h-14 rounded-xl font-bold bg-white" onClick={() => setLocation("/employee/meal-pass")}>
-          Cancel
-        </Button>
-        <Button 
-          className="flex-1 h-14 rounded-xl font-bold" 
-          disabled={!confirmed}
-          onClick={handleSubmit}
-        >
-          Submit Request
-        </Button>
-      </div>
-
-      <Dialog open={showSuccessModal} onOpenChange={(open) => !open && handleDone()}>
-        <DialogContent className="rounded-3xl max-w-sm w-[90%] p-8 text-center flex flex-col items-center">
-          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
-            <CheckCircle2 className="w-10 h-10" />
+      {/* Success Popup */}
+      <Dialog open={showSuccess}>
+        <DialogContent className="sm:max-w-md rounded-3xl p-8 text-center flex flex-col items-center [&>button]:hidden border-0 shadow-2xl">
+          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-5 animate-bounce shadow-inner">
+            <CheckCircle2 className="w-10 h-10" strokeWidth={3} />
           </div>
-          <DialogTitle className="text-2xl font-bold">Meal Confirmed</DialogTitle>
-          <div className="text-muted-foreground mt-2 text-base">
-            Your request has been approved. Collect directly from the restaurant.
-          </div>
-          <DialogFooter className="w-full mt-8 sm:justify-center">
-            <Button className="w-full h-14 rounded-xl font-bold text-lg" onClick={handleDone}>
-              View Orders
-            </Button>
-          </DialogFooter>
+          <DialogTitle className="text-xl font-black text-slate-800 mb-2">Order is placed</DialogTitle>
+          <p className="text-[15px] font-medium text-gray-500">
+            Please wait for 5 to 10mins.
+          </p>
         </DialogContent>
       </Dialog>
     </div>

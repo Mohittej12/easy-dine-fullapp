@@ -43,9 +43,10 @@ export type Order = {
   shopName: string;
   items: OrderItem[];
   amount: number;
-  orderType: "regular" | "mealPass";
+  orderType: "regular" | "mealPass" | "Ticketing";
+  ticketType?: "ticketId" | "offTicket";
   paymentType: "paid" | "free";
-  status: "delivered" | "rejected";
+  status: "delivered" | "rejected" | "pending";
   date: string;
   time: string;
 };
@@ -100,7 +101,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 40,
     category: "Breakfast",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1589301760014-d929f39ce9b1?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: true,
     calories: 250,
@@ -114,7 +115,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 60,
     category: "Breakfast",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: true,
     calories: 320,
@@ -128,7 +129,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 180,
     category: "Lunch",
     diet: "nonVeg",
-    image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: true,
     calories: 650,
@@ -142,7 +143,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 120,
     category: "Lunch",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: false,
     calories: 550,
@@ -156,7 +157,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 150,
     category: "Lunch",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc0?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: true,
     calories: 580,
@@ -170,7 +171,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 100,
     category: "Dinner",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: false,
     calories: 400,
@@ -185,7 +186,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 50,
     category: "Breakfast",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: true,
     calories: 280,
@@ -199,7 +200,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 140,
     category: "Dinner",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: true,
     calories: 800,
@@ -213,7 +214,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 20,
     category: "Snacks",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: true,
     calories: 260,
@@ -227,7 +228,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 80,
     category: "Juice/Beverages",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: true,
     calories: 300,
@@ -241,7 +242,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 15,
     category: "Juice/Beverages",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1571115177098-24de84b05537?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: false,
     calories: 120,
@@ -255,7 +256,7 @@ export const MOCK_FOOD_ITEMS: FoodItem[] = [
     price: 25,
     category: "Snacks",
     diet: "veg",
-    image: "https://images.unsplash.com/photo-1628198751509-322197652749?auto=format&fit=crop&q=80&w=800",
+    image: "",
     available: true,
     popular: false,
     calories: 220,
@@ -271,8 +272,8 @@ export const MOCK_ORDERS: Order[] = [
     shopId: "shop_meal_counter",
     shopName: "Meal Counter",
     items: [
-      { id: "item_1", foodItemId: "food_3", name: "Chicken Biryani", price: 180, quantity: 1, image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80&w=800" },
-      { id: "item_2", foodItemId: "food_10", name: "Cold Coffee", price: 80, quantity: 1, image: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&q=80&w=800" }
+      { id: "item_1", foodItemId: "food_3", name: "Chicken Biryani", price: 180, quantity: 1, image: "" },
+      { id: "item_2", foodItemId: "food_10", name: "Cold Coffee", price: 80, quantity: 1, image: "" }
     ],
     amount: 260,
     orderType: "regular",
@@ -288,7 +289,7 @@ export const MOCK_ORDERS: Order[] = [
     shopId: "shop_meal_counter",
     shopName: "Meal Counter",
     items: [
-      { id: "item_3", foodItemId: "food_4", name: "Veg Thali", price: 120, quantity: 1, image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&q=80&w=800" }
+      { id: "item_3", foodItemId: "food_4", name: "Veg Thali", price: 120, quantity: 1, image: "" }
     ],
     amount: 0,
     orderType: "mealPass",
@@ -304,8 +305,8 @@ export const MOCK_ORDERS: Order[] = [
     shopId: "shop_tuck_shop",
     shopName: "Tuck Shop",
     items: [
-      { id: "item_4", foodItemId: "food_8", name: "Margherita Pizza", price: 140, quantity: 1, image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&q=80&w=800" },
-      { id: "item_5", foodItemId: "food_11", name: "Masala Chai", price: 15, quantity: 2, image: "https://images.unsplash.com/photo-1571115177098-24de84b05537?auto=format&fit=crop&q=80&w=800" }
+      { id: "item_4", foodItemId: "food_8", name: "Margherita Pizza", price: 140, quantity: 1, image: "" },
+      { id: "item_5", foodItemId: "food_11", name: "Masala Chai", price: 15, quantity: 2, image: "" }
     ],
     amount: 170,
     orderType: "regular",

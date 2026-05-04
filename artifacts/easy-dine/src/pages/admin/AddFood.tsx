@@ -1,137 +1,207 @@
-import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { useState, useRef } from "react";
+import { Link, useLocation, useSearch } from "wouter";
 import { useAppState } from "@/hooks/use-app-state";
-import { ChevronLeft, UploadCloud } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminAddFood() {
   const [, setLocation] = useLocation();
+  const searchString = useSearch();
+  const shopIdFromUrl = new URLSearchParams(searchString).get("shop");
   const { addFoodItem, shops } = useAppState();
   
-  const [formData, setFormData] = useState({
-    shopId: shops[0]?.id || "",
-    name: "",
-    price: "",
-    category: "Breakfast",
-    diet: "veg" as "veg" | "nonVeg",
-    description: "",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800"
-  });
+  const [shopId, setShopId] = useState(shopIdFromUrl || shops[0]?.id || "");
+  const [image, setImage] = useState("");
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState<"Breakfast" | "Lunch" | "Dinner" | "Tuck Shop">("Breakfast");
+  const [diet, setDiet] = useState<"veg" | "nonVeg">("veg");
+  const [description, setDescription] = useState("");
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newItem = {
-      id: `food_${Math.random()}`,
-      shopId: formData.shopId,
-      name: formData.name,
-      price: Number(formData.price),
-      category: formData.category as any,
-      diet: formData.diet,
-      description: formData.description,
-      image: formData.image,
+    if (!name || !price || !shopId) {
+      toast.error("Name, price, and cafeteria are required");
+      return;
+    }
+
+    addFoodItem({
+      id: `food_${Math.random().toString(36).substr(2, 9)}`,
+      shopId,
+      name,
+      price: Number(price),
+      category,
+      diet,
+      description,
+      image,
       available: true,
       popular: false
-    };
-    addFoodItem(newItem);
-    toast.success("Food item added successfully");
-    setLocation(`/admin/food-items?shop=${formData.shopId}`);
+    });
+
+    toast.success("Food item successfully added!");
+    setLocation(`/admin/food-items?shop=${shopId}`);
   };
 
   return (
-    <div className="space-y-6 pb-8 max-w-2xl mx-auto">
-      <div className="flex items-center gap-4">
-        <Link href="/admin/food-items">
-          <Button variant="ghost" size="icon" className="rounded-xl bg-white border border-border">
-            <ChevronLeft className="w-5 h-5" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Add Food Item</h1>
-          <p className="text-muted-foreground text-sm">Add item to global inventory</p>
-        </div>
+    <div className="flex flex-col min-h-[100dvh] relative overflow-x-hidden bg-[#1E1E1E] pb-8">
+      
+      {/* Background Image */}
+      <div className="fixed inset-0 z-0">
+        <img 
+          src="/background-cafeteria.png" 
+          alt="Cafeteria Background" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90 backdrop-blur-[4px]" />
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-[24px] shadow-sm border border-border p-6 md:p-8 space-y-8">
+      <div className="z-10 relative flex flex-col min-h-full px-4 pt-6 max-w-2xl mx-auto w-full">
         
-        <div className="space-y-2">
-          <Label htmlFor="shop">Assign to Cafeteria</Label>
-          <select 
-            id="shop"
-            required
-            className="flex h-14 w-full rounded-xl border border-primary/50 bg-primary/5 px-3 py-1 font-bold text-primary shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            value={formData.shopId}
-            onChange={e => setFormData({...formData, shopId: e.target.value})}
-          >
-            {shops.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-          </select>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <button onClick={() => setLocation(`/admin/food-items?shop=${shopId}`)} className="p-2 bg-white/10 rounded-full text-white backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="text-[20px] font-extrabold text-white drop-shadow-md">Add Food Item</h1>
+          <div className="w-10"></div>
         </div>
 
-        <div className="space-y-3">
-          <Label className="text-base">Food Image</Label>
-          <div className="border-2 border-dashed border-border rounded-[24px] p-8 text-center bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[200px]">
-            <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center text-primary mb-4">
-              <UploadCloud className="w-8 h-8" />
-            </div>
-            <p className="font-bold text-foreground">Upload Food Image</p>
-            <p className="text-sm text-muted-foreground mt-1">Drag & drop or click to browse</p>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="name">Food Name</Label>
-            <Input id="name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="h-12 rounded-xl" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="price">Price (₹)</Label>
-            <Input id="price" type="number" required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="h-12 rounded-xl" />
-          </div>
+        <form onSubmit={handleSubmit} className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 shadow-xl border border-white/20 flex flex-col gap-5">
           
           <div className="space-y-2">
-            <Label htmlFor="category">Primary Category</Label>
+            <label className="text-[13px] font-bold text-gray-300 mb-1.5 block">Assign to Cafeteria <span className="text-[#FF3B30]">*</span></label>
             <select 
-              id="category"
-              className="flex h-12 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none"
-              value={formData.category}
-              onChange={e => setFormData({...formData, category: e.target.value})}
+              value={shopId}
+              onChange={(e) => setShopId(e.target.value)}
+              className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-[14px] font-bold text-white shadow-inner focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/50 appearance-none"
             >
-              <option value="Breakfast">Breakfast</option>
-              <option value="Lunch">Lunch</option>
-              <option value="Dinner">Dinner</option>
-              <option value="Snacks">Snacks</option>
-              <option value="Juice/Beverages">Juice/Beverages</option>
+              <option value="" disabled>Select Cafeteria</option>
+              {shops.map(s => <option key={s.id} value={s.id} className="text-black">{s.name}</option>)}
             </select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="diet">Diet Type</Label>
-            <select 
-              id="diet"
-              className="flex h-12 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none"
-              value={formData.diet}
-              onChange={e => setFormData({...formData, diet: e.target.value as any})}
+          {/* Image Upload Area */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-bold text-gray-300">Food Image (Optional)</label>
+            <div 
+              onClick={() => fileInputRef.current?.click()}
+              className="h-40 bg-white/5 border-2 border-dashed border-white/20 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-white/10 transition-colors overflow-hidden relative shadow-inner"
             >
-              <option value="veg">Vegetarian</option>
-              <option value="nonVeg">Non-Vegetarian</option>
-            </select>
+              {image ? (
+                <img src={image} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                <>
+                  <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center shadow-sm mb-2 text-gray-400">
+                    <ImageIcon className="w-6 h-6" />
+                  </div>
+                  <p className="text-[13px] font-bold text-gray-400">Tap to upload image</p>
+                </>
+              )}
+            </div>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleImageUpload}
+              accept="image/*" 
+              className="hidden" 
+            />
           </div>
-        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="desc">Description</Label>
-          <Textarea id="desc" required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="min-h-[100px] rounded-xl resize-none" />
-        </div>
+          <div className="space-y-4">
+            <div>
+              <label className="text-[13px] font-bold text-gray-300 mb-1.5 block">Food Name <span className="text-[#FF3B30]">*</span></label>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Veg Thali"
+                className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-[14px] font-bold text-white shadow-inner focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/50 placeholder:text-gray-500" 
+              />
+            </div>
+            
+            <div>
+              <label className="text-[13px] font-bold text-gray-300 mb-1.5 block">Price (INR) <span className="text-[#FF3B30]">*</span></label>
+              <input 
+                type="number" 
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="0"
+                className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-[14px] font-bold text-white shadow-inner focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/50 placeholder:text-gray-500" 
+              />
+            </div>
 
-        <div className="pt-4 border-t border-border">
-          <Button type="submit" className="w-full md:w-auto px-8 h-12 rounded-xl font-bold text-base">
-            Save Food
-          </Button>
-        </div>
-      </form>
+            <div>
+              <label className="text-[13px] font-bold text-gray-300 mb-1.5 block">Category</label>
+              <select 
+                value={category}
+                onChange={(e) => setCategory(e.target.value as any)}
+                className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-[14px] font-bold text-white shadow-inner focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/50 appearance-none"
+              >
+                <option value="Breakfast" className="text-black">Breakfast</option>
+                <option value="Lunch" className="text-black">Lunch</option>
+                <option value="Dinner" className="text-black">Dinner</option>
+                <option value="Tuck Shop" className="text-black">Tuck Shop</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-[13px] font-bold text-gray-300 mb-1.5 block">Diet Type</label>
+              <div className="flex bg-black/40 rounded-xl p-1 shadow-inner border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setDiet("veg")}
+                  className={`flex-1 py-2.5 text-[14px] font-bold rounded-lg transition-all ${
+                    diet === "veg" ? 'bg-white text-green-600 shadow-sm' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Vegetarian
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDiet("nonVeg")}
+                  className={`flex-1 py-2.5 text-[14px] font-bold rounded-lg transition-all ${
+                    diet === "nonVeg" ? 'bg-white text-[#FF3B30] shadow-sm' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Non-Vegetarian
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[13px] font-bold text-gray-300 mb-1.5 block">Description</label>
+              <textarea 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief description of the item..."
+                rows={3}
+                className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-[14px] font-medium text-white shadow-inner focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/50 resize-none placeholder:text-gray-500" 
+              />
+            </div>
+          </div>
+
+          <button 
+            type="submit"
+            className="w-full mt-4 bg-[#FF3B30] text-white py-4 rounded-xl font-bold text-[16px] shadow-[0_4px_14px_rgba(255,59,48,0.4)] hover:bg-[#E31837] active:scale-[0.98] transition-all"
+          >
+            Save Food Item
+          </button>
+        </form>
+
+      </div>
     </div>
   );
 }

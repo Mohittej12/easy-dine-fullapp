@@ -10,6 +10,8 @@ import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import VerifyEmail from "@/pages/auth/VerifyEmail";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
+import VendorForgotPassword from "@/pages/auth/VendorForgotPassword";
+import AuthTerms from "@/pages/auth/Terms";
 
 // Layouts
 import EmployeeLayout from "@/components/layouts/EmployeeLayout";
@@ -22,6 +24,7 @@ import EmployeeHome from "@/pages/employee/Home";
 import EmployeeMenu from "@/pages/employee/Menu";
 import EmployeeOrders from "@/pages/employee/Orders";
 import EmployeeProfile from "@/pages/employee/Profile";
+import EmployeeFavorites from "@/pages/employee/Favorites";
 import EmployeeCart from "@/pages/employee/Cart";
 import EmployeeCheckout from "@/pages/employee/Checkout";
 import MealPass from "@/pages/employee/MealPass";
@@ -38,6 +41,7 @@ import VendorEditFood from "@/pages/vendor/EditFood";
 import VendorReports from "@/pages/vendor/Reports";
 import VendorTicketData from "@/pages/vendor/TicketData";
 import VendorTerms from "@/pages/vendor/Terms";
+import VendorProfile from "@/pages/vendor/Profile";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/Dashboard";
@@ -66,6 +70,9 @@ function Router() {
       <Route path="/employee/register" component={Register} />
       <Route path="/employee/verify-email" component={VerifyEmail} />
       <Route path="/employee/forgot-password" component={ForgotPassword} />
+      <Route path="/vendor/forgot-password" component={VendorForgotPassword} />
+      <Route path="/admin/forgot-password" component={ForgotPassword} />
+      <Route path="/terms" component={AuthTerms} />
       
       {/* Employee Routes */}
       <Route path="/employee/mode-selection" component={ModeSelection} />
@@ -80,6 +87,9 @@ function Router() {
       </Route>
       <Route path="/employee/profile">
         <EmployeeLayout><EmployeeProfile /></EmployeeLayout>
+      </Route>
+      <Route path="/employee/favorites">
+        <EmployeeLayout><EmployeeFavorites /></EmployeeLayout>
       </Route>
       <Route path="/employee/cart">
         <EmployeeLayout><EmployeeCart /></EmployeeLayout>
@@ -124,6 +134,9 @@ function Router() {
       </Route>
       <Route path="/vendor/terms">
         <VendorLayout><VendorTerms /></VendorLayout>
+      </Route>
+      <Route path="/vendor/profile">
+        <VendorLayout><VendorProfile /></VendorLayout>
       </Route>
 
       {/* Admin Routes */}
