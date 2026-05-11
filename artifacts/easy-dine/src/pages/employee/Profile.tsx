@@ -297,6 +297,13 @@ export default function EmployeeProfile() {
           <p className="text-[14px] font-medium text-gray-500 leading-snug mb-6">
             Contact your support admin team and the developer for any improvements or complaints or any feedback. Thank you!
           </p>
+          
+          <div className="w-full pt-4 border-t border-gray-100 mb-6">
+            <p className="text-[9px] font-bold text-gray-400 tracking-[0.2em] uppercase mb-1.5">Developed by</p>
+            <p className="text-[11px] font-black text-slate-800 tracking-tight">
+              Gowrabathuni Mohit Tej • Varshini P R • Devika J
+            </p>
+          </div>
           <button
             onClick={() => setIsHelpOpen(false)}
             className="w-full bg-slate-800 text-white py-3.5 rounded-xl font-bold text-[14px] hover:bg-black transition-colors"

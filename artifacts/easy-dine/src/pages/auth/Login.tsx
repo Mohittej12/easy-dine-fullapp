@@ -80,14 +80,25 @@ export default function Login() {
                    Easy Dine
                  </motion.span>
                </motion.div>
-               <motion.div 
-                 initial={{ scaleX: 0 }}
-                 animate={{ scaleX: 1 }}
-                 transition={{ delay: 0.8, duration: 0.8, ease: "anticipate" }}
-                 className="h-1 w-16 bg-[#E31837] mt-6 rounded-full"
-               />
-            </div>
-          </motion.div>
+                <motion.div 
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.8, duration: 0.8, ease: "anticipate" }}
+                  className="h-1 w-16 bg-[#E31837] mt-6 rounded-full"
+                />
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2, duration: 0.8 }}
+                  className="mt-8 text-center"
+                >
+                  <p className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase mb-1">Developed by</p>
+                  <p className="text-[12px] font-black text-black tracking-tight">
+                    Gowrabathuni Mohit Tej • Varshini P R • Devika J
+                  </p>
+                </motion.div>
+             </div>
+           </motion.div>
         )}
       </AnimatePresence>
 
@@ -227,30 +238,18 @@ export default function Login() {
                   </p>
                 )}
 
-                <div className="pt-2">
-                  <Link href={activeRole === 'vendor' ? "/vendor/forgot-password" : activeRole === 'admin' ? "/admin/forgot-password" : "/employee/forgot-password"}>
-                    <span className="text-[13px] font-bold text-[#FF7A00] hover:underline cursor-pointer">
-                      Forgot Password?
-                    </span>
-                  </Link>
                 </div>
               </div>
+
+               {/* Credits */}
+               <div className="mt-8 pb-2 text-center border-t border-gray-100 pt-6">
+                 <p className="text-[9px] font-bold text-gray-400 tracking-[0.2em] uppercase mb-1.5">Developed by</p>
+                 <p className="text-[11px] font-black text-slate-800 tracking-tight">
+                   Gowrabathuni Mohit Tej • Varshini P R • Devika J
+                 </p>
+               </div>
             </form>
           </motion.div>
-        {/* Credits */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 1 }}
-          className="relative z-10 mt-8 mb-4 text-center px-4"
-        >
-          <p className="text-white/60 text-[10px] font-medium tracking-[0.2em] uppercase">
-            Developed by
-          </p>
-          <p className="text-white/90 text-[13px] font-bold mt-1 tracking-tight">
-            Gowrabathuni Mohit Tej • Varshini P R • Devika J
-          </p>
-        </motion.div>
       </div>
     </>
   );
