@@ -75,11 +75,5 @@ pnpm --filter @workspace/easy-dine build
 - `lib`: Shared workspace libraries and API clients.
 
 ---
-## 👥 Development Team
-
-This project was envisioned and developed by:
-- **Gowrabathuni Mohit Tej**
-- **Varshini P R**
-- **Devika J**
 
 Built with ❤️ for a better dining experience.
