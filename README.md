@@ -74,5 +74,7 @@ pnpm --filter @workspace/easy-dine build
 - `artifacts/easy-dine/src/hooks`: Custom React hooks for application state and logic.
 - `lib`: Shared workspace libraries and API clients.
 
+## Check out this Website 
+   https://easy-dine-fullapp-easy-dine.vercel.app/login
 ---
 Built with ❤️ for a better dining experience.
