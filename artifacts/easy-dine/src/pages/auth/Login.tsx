@@ -237,7 +237,20 @@ export default function Login() {
               </div>
             </form>
           </motion.div>
-        </div>
+        {/* Credits */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2, duration: 1 }}
+          className="relative z-10 mt-8 mb-4 text-center px-4"
+        >
+          <p className="text-white/60 text-[10px] font-medium tracking-[0.2em] uppercase">
+            Developed by
+          </p>
+          <p className="text-white/90 text-[13px] font-bold mt-1 tracking-tight">
+            Gowrabathuni Mohit Tej • Varshini P R • Devika J
+          </p>
+        </motion.div>
       </div>
     </>
   );
