@@ -238,16 +238,22 @@ export default function Login() {
                   </p>
                 )}
 
+                <div className="pt-2">
+                  <Link href={activeRole === 'vendor' ? "/vendor/forgot-password" : activeRole === 'admin' ? "/admin/forgot-password" : "/employee/forgot-password"}>
+                    <span className="text-[13px] font-bold text-[#FF7A00] hover:underline cursor-pointer">
+                      Forgot Password?
+                    </span>
+                  </Link>
                 </div>
               </div>
 
-               {/* Credits */}
-               <div className="mt-8 pb-2 text-center border-t border-gray-100 pt-6">
-                 <p className="text-[9px] font-bold text-gray-400 tracking-[0.2em] uppercase mb-1.5">Developed by</p>
-                 <p className="text-[11px] font-black text-slate-800 tracking-tight">
-                   Gowrabathuni Mohit Tej • Varshini P R • Devika J
-                 </p>
-               </div>
+              {/* Credits Section */}
+              <div className="mt-8 pb-2 text-center border-t border-gray-100 pt-6">
+                <p className="text-[9px] font-bold text-gray-400 tracking-[0.2em] uppercase mb-1.5">Developed by</p>
+                <p className="text-[11px] font-black text-slate-800 tracking-tight">
+                  Gowrabathuni Mohit Tej • Varshini P R • Devika J
+                </p>
+              </div>
             </form>
           </motion.div>
       </div>
