@@ -94,7 +94,7 @@ export default function Login() {
                 >
                   <p className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase mb-1">Developed by</p>
                   <p className="text-[12px] font-black text-black tracking-tight">
-                    Gowrabathuni Mohit Tej • Varshini P R • Devika J
+                    Gowrabathuni Mohit Tej 
                   </p>
                 </motion.div>
              </div>
@@ -251,7 +251,7 @@ export default function Login() {
               <div className="mt-8 pb-2 text-center border-t border-gray-100 pt-6">
                 <p className="text-[9px] font-bold text-gray-400 tracking-[0.2em] uppercase mb-1.5">Developed by</p>
                 <p className="text-[11px] font-black text-slate-800 tracking-tight">
-                  Gowrabathuni Mohit Tej • Varshini P R • Devika J
+                  Gowrabathuni Mohit Tej 
                 </p>
               </div>
             </form>
